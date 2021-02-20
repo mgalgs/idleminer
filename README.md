@@ -13,7 +13,8 @@ the moment.
 
 ## Installation
 
-This is essentially a collection of scripts and systemd service files.
+This is essentially a collection of scripts and systemd (user) service
+files.
 
 Install the prerequisites with your system package manager:
 
