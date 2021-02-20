@@ -45,10 +45,15 @@ Then start `idleminer.service`:
 
     systemctl --user start idleminer.service
 
-And that's it! Now when your computer is idle (as per `xprintidle`) for
-longer than the period specified in your `idleminer-environment` the
-`ethminer.service` will be kicked off and start mining. When `xprintidle`
-detects user activity again `ethminer.service` will be stopped.
+And that's it! You can "enable" the `idleminer.service` if you'd like it to
+run anytime you're logged in (recommended):
+
+    systemctl --user enable idleminer.service
+
+Now when your computer is idle (as per `xprintidle`) for longer than the
+period specified in your `idleminer-environment` the `ethminer.service`
+will be kicked off and start mining. When `xprintidle` detects user
+activity again `ethminer.service` will be stopped.
 
 You can monitor the progress of `idleminer.service` and `ethminer.service`
 with:
