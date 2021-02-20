@@ -1,0 +1,10 @@
+[Unit]
+Description=Ethereum miner
+After=network.target
+
+[Service]
+EnvironmentFile=%h/.config/idleminer-environment
+ExecStart=/usr/local/bin/start_ethminer.sh
+
+[Install]
+WantedBy=multi-user.target

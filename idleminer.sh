@@ -7,16 +7,14 @@
 
 # Environment variables:
 #   - IDLE_THRESHOLD :: Required. E.g. "10 minutes".
-#   - ETHMINER_ADDRESS :: Required. ethminer address to print out balance
-#                         as we mine.
+#   - ETHMINER_POOL :: Required. ethminer pool (for balance monitoring)
 #   - DEBUG :: Optional. Set to 1 for debug prints.
-
-# [[ $UID -eq 0 ]] || { echo "Must be run as root. Be better."; exit 1; }
 
 SERVICE_NAME=$1
 
-[[ -n "$ETHMINER_ADDRESS" ]] || { echo "Please set ETHMINER_ADDRESS"; exit 1; }
-short_ethminer_address="$(cut -c1-8 <<<${ETHMINER_ADDRESS})...$(cut -c36- <<<${ETHMINER_ADDRESS})"
+[[ -n "$ETHMINER_POOL" ]] || { echo "Please set ETHMINER_POOL"; exit 1; }
+ethminer_address=$(sed 's|.*//\(0x[0-9a-fA-F]\+\).*|\1|' <<<"$ETHMINER_POOL")
+short_ethminer_address="$(cut -c1-8 <<<${ethminer_address})...$(cut -c36- <<<${ethminer_address})"
 
 # convert readable idle threshold to seconds
 IDLE_THRESHOLD=${IDLE_THRESHOLD:-"10 minutes"}
@@ -39,11 +37,11 @@ debug() {
 }
 
 get_balance() {
-    curl -s https://flexpool.io/api/v1/miner/${ETHMINER_ADDRESS}/balance/ | jq -r '.result * pow(10; -18)'
+    curl -s https://flexpool.io/api/v1/miner/${ethminer_address}/balance/ | jq -r '.result * pow(10; -18)'
 }
 
 print_balance() {
-    echo "Balance of $ETHMINER_ADDRESS: $(get_balance) ETH"
+    echo "Balance of $ethminer_address: $(get_balance) ETH"
 }
 
 prev_balance=$(get_balance)
@@ -59,7 +57,7 @@ while :; do
             systemctl --user start "$SERVICE_NAME"
         }
         new_balance=$(get_balance)
-        [[ $new_balance -ne $prev_balance ]] && echo "NEW BALANCE on $short_ethminer_address 🚀: $new_balance"
+        [[ $new_balance != $prev_balance ]] && echo "NEW BALANCE on $short_ethminer_address 🚀: $new_balance"
         prev_balance=$new_balance
     else
         # ensure it's not running

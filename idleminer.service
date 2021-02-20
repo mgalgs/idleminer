@@ -1,0 +1,10 @@
+[Unit]
+Description=Start ethminer service when user is idle
+After=network.target
+
+[Service]
+EnvironmentFile=%h/.config/idleminer-environment
+ExecStart=/usr/local/bin/idleminer.sh ethminer.service
+
+[Install]
+WantedBy=multi-user.target
