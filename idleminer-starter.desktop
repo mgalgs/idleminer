@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=idleminer starter
+Exec=systemctl --user start idleminer.service

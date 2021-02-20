@@ -44,6 +44,9 @@ print_balance() {
     echo "Balance of $ethminer_address: $(get_balance) ETH"
 }
 
+debug "DISPLAY=$DISPLAY"
+debug "XAUTHORITY=$XAUTHORITY"
+
 prev_balance=$(get_balance)
 print_balance
 

@@ -1,6 +1,6 @@
 [Unit]
 Description=Start ethminer service when user is idle
-After=network.target
+After=gnome-session.target
 
 [Service]
 EnvironmentFile=%h/.config/idleminer-environment

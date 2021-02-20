@@ -31,24 +31,15 @@ root (at least not without X11 authentication shenanigans).
     mkdir -pv ~/.config/systemd/user
     ln -sv $(realpath ethminer.service) ~/.config/systemd/user
     ln -sv $(realpath idleminer.service) ~/.config/systemd/user
+    ln -sv $(realpath idleminer-starter.desktop) ~/.config/autostart/
     sudo ln -sv $(realpath idleminer.sh) /usr/local/bin/
     sudo ln -sv $(realpath start_ethminer.sh) /usr/local/bin/
 
 then update `~/.config/idleminer-environment` with your miner address, etc.
 
-Reload the `systemctl` daemon (note the lack of `sudo` since we're using
-`--user`):
-
-    systemctl --user daemon-reload
-
-Then start `idleminer.service`:
-
-    systemctl --user start idleminer.service
-
-And that's it! You can "enable" the `idleminer.service` if you'd like it to
-run anytime you're logged in (recommended):
-
-    systemctl --user enable idleminer.service
+Reboot (or reload the `systemctl` daemon and
+logout/login). `idleminer.service` will be started automatically when you
+login to your desktop.
 
 Now when your computer is idle (as per `xprintidle`) for longer than the
 period specified in your `idleminer-environment` the `ethminer.service`
