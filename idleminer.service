@@ -4,7 +4,7 @@ After=gnome-session.target
 
 [Service]
 EnvironmentFile=%h/.config/idleminer-environment
-ExecStart=/usr/local/bin/idleminer.sh ethminer.service
+ExecStart=%h/bin/idleminer.sh ethminer.service
 
 [Install]
 WantedBy=default.target
