@@ -37,7 +37,11 @@ debug() {
 }
 
 get_balance() {
-    curl -s https://flexpool.io/api/v1/miner/${ethminer_address}/balance/ | jq -r '.result * pow(10; -18)'
+    curl -s https://flexpool.io/api/v1/miner/$ethminer_address/balance/ | jq -r '.result * pow(10; -18)'
+}
+
+get_effective_hashrate() {
+    curl -s https://flexpool.io/api/v1/miner/$ethminer_address/current/ | jq '.result.effective_hashrate * .000001'
 }
 
 print_balance() {
@@ -61,7 +65,10 @@ while :; do
             systemctl --user start "$SERVICE_NAME"
         }
         new_balance=$(get_balance)
-        [[ $new_balance != $prev_balance ]] && echo "NEW BALANCE on $short_ethminer_address 🚀: $new_balance"
+        [[ $new_balance != $prev_balance ]] && {
+            ehashrate=$(get_effective_hashrate)
+            echo "NEW BALANCE on $short_ethminer_address 🚀: $new_balance (${ehashrate:0:5} MH/s)"
+        }
         prev_balance=$new_balance
     else
         # ensure it's not running
