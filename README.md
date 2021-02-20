@@ -32,8 +32,8 @@ root (at least not without X11 authentication shenanigans).
     ln -sv $(realpath ethminer.service) ~/.config/systemd/user
     ln -sv $(realpath idleminer.service) ~/.config/systemd/user
     ln -sv $(realpath idleminer-starter.desktop) ~/.config/autostart/
-    sudo ln -sv $(realpath idleminer.sh) /usr/local/bin/
-    sudo ln -sv $(realpath start_ethminer.sh) /usr/local/bin/
+    ln -sv $(realpath idleminer.sh) ~/bin/
+    ln -sv $(realpath start_ethminer.sh) ~/bin/
 
 then update `~/.config/idleminer-environment` with your miner address, etc.
 
