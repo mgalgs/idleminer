@@ -48,6 +48,7 @@ debug "DISPLAY=$DISPLAY"
 debug "XAUTHORITY=$XAUTHORITY"
 
 prev_balance=$(get_balance)
+initial_balance=$prev_balance
 print_balance
 
 while :; do
@@ -69,6 +70,11 @@ while :; do
             systemctl --user stop "$SERVICE_NAME"
             # final balance print after transitioning to the stopped state
             print_balance
+            new_balance=$(get_balance)
+            usd_earned=$(curl -s https://api.coinbase.com/v2/prices/ETH-USD/sell \
+                             | jq ".data.amount|tonumber * ($new_balance - $initial_balance)")
+            echo "USD earned this session: \$${usd_earned:0:5} 💸"
+            initial_balance=$new_balance
         }
     fi
     sleep 10
