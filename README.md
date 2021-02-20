@@ -2,6 +2,12 @@
 
 Mine crypto while your computer is idle.
 
+This might or might not be profitable or a good idea for you. It might make
+sense if you have a negative power bill from solar and would like a better
+return on that power generation than the pennies-on-the-dollar typically
+offered by power companies, for example (hmmm, not specific at all, is
+it?).
+
 Only `ethminer` through [flexpool](https://flexpool.io/) is supported at
 the moment.
 
