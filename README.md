@@ -11,10 +11,11 @@ it?).
 Only `ethminer` through [flexpool](https://flexpool.io/) is supported at
 the moment.
 
-## Installation
-
 This is essentially a collection of scripts and systemd (user) service
-files.
+files. It starts and stops mining automatically, using `xprintidle` to
+determine idleness.
+
+## Installation
 
 Install the prerequisites with your system package manager:
 
