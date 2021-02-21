@@ -37,7 +37,8 @@ root (at least not without X11 authentication shenanigans).
     ln -sv $(realpath idleminer.sh) ~/bin/
     ln -sv $(realpath start_ethminer.sh) ~/bin/
 
-then update `~/.config/idleminer-environment` with your miner address, etc.
+then update `~/.config/idleminer-environment` with your miner address, idle
+threshold, etc.
 
 Reboot (or reload the `systemctl` daemon and
 logout/login). `idleminer.service` will be started automatically when you
