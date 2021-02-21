@@ -21,12 +21,7 @@ IDLE_THRESHOLD=${IDLE_THRESHOLD:-"10 minutes"}
 idle_threshold_ms=$(units --terse "$IDLE_THRESHOLD" milliseconds)
 
 # validate service name
-# Not working for user services... :(
-# [[ -n "$SERVICE_NAME" ]] || { usage; exit 1; }
-# systemctl list-units --full --all | grep -Fq "$SERVICE_NAME" || {
-#     echo "Can't find service: $SERVICE_NAME"
-#     exit 1;
-# }
+[[ -n "$SERVICE_NAME" ]] || { usage; exit 1; }
 
 usage() {
     echo "Usage: $0 <service-name>"
