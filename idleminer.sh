@@ -7,7 +7,8 @@
 
 # Environment variables:
 #   - ETHMINER_POOL :: Required. ethminer pool (for balance monitoring)
-#   - IDLE_THRESHOLD :: Optional. Default: "10 minutes".
+#   - IDLE_THRESHOLD :: Optional. Default: "10 minutes". Any string usable
+#                       with `units`.
 #   - DEBUG :: Optional. Set to 1 for debug prints.
 
 SERVICE_NAME=$1
