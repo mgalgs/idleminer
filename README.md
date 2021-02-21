@@ -13,7 +13,7 @@ it?).
 Only `ethminer` through [flexpool](https://flexpool.io/) is supported at
 the moment.
 
-This is essentially a collection of scripts and systemd (user) service
+This is really just a collection of scripts and systemd (user) service
 files. It starts and stops mining automatically, using `xprintidle` to
 determine idleness.
 
