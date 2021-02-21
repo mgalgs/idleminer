@@ -48,6 +48,16 @@ print_balance() {
     echo "Balance of $ethminer_address: $(get_balance) ETH"
 }
 
+exit_handler() {
+    echo "Heading out 🏂 Stopping $SERVICE_NAME if needed."
+    systemctl --user is-active --quiet "$SERVICE_NAME" && {
+        systemctl --user stop "$SERVICE_NAME"
+    }
+    exit 0
+}
+
+trap exit_handler TERM
+
 debug "DISPLAY=$DISPLAY"
 debug "XAUTHORITY=$XAUTHORITY"
 
