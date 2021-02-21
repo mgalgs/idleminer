@@ -6,8 +6,8 @@
 #   - jq
 
 # Environment variables:
-#   - IDLE_THRESHOLD :: Required. E.g. "10 minutes".
 #   - ETHMINER_POOL :: Required. ethminer pool (for balance monitoring)
+#   - IDLE_THRESHOLD :: Optional. Default: "10 minutes".
 #   - DEBUG :: Optional. Set to 1 for debug prints.
 
 SERVICE_NAME=$1
