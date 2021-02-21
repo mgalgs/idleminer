@@ -1,6 +1,6 @@
 # idleminer
 
-Mine crypto while your computer is idle.
+Mine crypto while your computer is idle. :pick:
 
 ![Screenshot](docs/screenshot.png)
 
@@ -56,3 +56,7 @@ with:
 and
 
     journalctl --user -xf -u ethminer.service
+
+## Limitations
+
+Innumerable.
