@@ -41,7 +41,7 @@ then update `~/.config/idleminer-environment` with your miner address, etc.
 
 Reboot (or reload the `systemctl` daemon and
 logout/login). `idleminer.service` will be started automatically when you
-login to your desktop. If you'd rather start it manually each time justs
+login to your desktop. If you'd rather start it manually each time just
 remove `~/.config/autostart/idleminer-starter.desktop`.
 
 Now when your computer is idle (as per `xprintidle`) for longer than the
