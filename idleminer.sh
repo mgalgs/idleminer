@@ -88,7 +88,7 @@ while :; do
             usd_earned=$(curl -s https://api.coinbase.com/v2/prices/ETH-USD/sell \
                              | jq ".data.amount|tonumber * ($new_balance - $initial_balance)")
             eth_earned=$(awk "BEGIN {printf \"%.8f\n\", $new_balance - $initial_balance}")
-            echo "ETH earned this session: $eth_earned (~\$${usd_earned:0:5}USD) 💸"
+            echo "ETH earned this session: $eth_earned (\$${usd_earned:0:5}USD) 💸"
             initial_balance=$new_balance
         }
     fi
