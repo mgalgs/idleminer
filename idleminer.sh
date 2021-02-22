@@ -4,6 +4,7 @@
 #   - xprintidle
 #   - units
 #   - jq
+#   - awk
 
 # Environment variables:
 #   - ETHMINER_POOL :: Required. ethminer pool (for balance monitoring)
@@ -86,7 +87,8 @@ while :; do
             new_balance=$(get_balance)
             usd_earned=$(curl -s https://api.coinbase.com/v2/prices/ETH-USD/sell \
                              | jq ".data.amount|tonumber * ($new_balance - $initial_balance)")
-            echo "USD earned this session: \$${usd_earned:0:5} 💸"
+            eth_earned=$(awk "BEGIN {printf \"%.8f\n\", $new_balance - $initial_balance}")
+            echo "ETH earned this session: $eth_earned (~\$${usd_earned:0:5}USD) 💸"
             initial_balance=$new_balance
         }
     fi

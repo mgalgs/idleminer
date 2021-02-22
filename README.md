@@ -24,6 +24,7 @@ Install the prerequisites with your system package manager:
   - `xprintidle`
   - `units`
   - `jq`
+  - `awk`
 
 Then copy the config and systemd units into their appropriate
 directories. We use "user" service files since `xprintidle` doesn't work as
