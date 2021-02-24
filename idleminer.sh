@@ -74,7 +74,7 @@ while :; do
         new_balance=$(get_balance)
         [[ $new_balance != $prev_balance ]] && {
             ehashrate=$(get_effective_hashrate)
-            echo "NEW BALANCE on $short_ethminer_address 🚀: $new_balance (${ehashrate:0:5} MH/s)"
+            echo "NEW BALANCE on $short_ethminer_address 🚀: ${new_balance:0:8} (${ehashrate:0:5} MH/s)"
         }
         prev_balance=$new_balance
     else
