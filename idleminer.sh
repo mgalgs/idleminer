@@ -63,6 +63,7 @@ debug "XAUTHORITY=$XAUTHORITY"
 prev_balance=$(get_balance)
 initial_balance=$prev_balance
 print_balance
+echo "Will start mining once idle for $IDLE_THRESHOLD"
 
 while :; do
     idle_time_ms=$(xprintidle)
