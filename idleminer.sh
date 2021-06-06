@@ -34,11 +34,13 @@ debug() {
 }
 
 get_balance() {
-    curl -s https://flexpool.io/api/v1/miner/$ethminer_address/balance/ | jq -r '.result * pow(10; -18)'
+    curl -s "https://api.flexpool.io/v2/miner/balance?coin=ETH&address=${ethminer_address}" \
+        | jq '.result.balance * pow(10; -18)'
 }
 
 get_effective_hashrate() {
-    curl -s https://flexpool.io/api/v1/miner/$ethminer_address/current/ | jq '.result.effective_hashrate * .000001'
+    curl -s "https://api.flexpool.io/v2/miner/stats?coin=ETH&address=${ethminer_address}" \
+        | jq '.result.averageEffectiveHashrate * .000001'
 }
 
 print_balance() {
