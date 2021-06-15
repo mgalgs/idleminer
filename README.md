@@ -41,8 +41,8 @@ root (at least not without X11 authentication shenanigans).
 then update `~/.config/idleminer-environment` with your miner address, idle
 threshold, etc.
 
-Reboot (or reload the `systemctl` daemon and
-logout/login). `idleminer.service` will be started automatically when you
+Reboot (or reload the `systemctl` daemon with `systemctl --user
+daemon-reload`). `idleminer.service` will be started automatically when you
 login to your desktop. If you'd rather start it manually each time just
 remove `~/.config/autostart/idleminer-starter.desktop` and run `systemctl
 --user start idleminer.service`.
