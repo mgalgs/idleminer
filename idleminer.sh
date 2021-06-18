@@ -13,6 +13,7 @@
 #   - DEBUG :: Optional. Set to 1 for debug prints.
 
 SERVICE_NAME=$1
+LOGFILE=/tmp/idleminer.log
 
 [[ -n "$ETHMINER_POOL" ]] || { echo "Please set ETHMINER_POOL"; exit 1; }
 ethminer_address=$(sed 's|.*//\(0x[0-9a-fA-F]\+\).*|\1|' <<<"$ETHMINER_POOL")
@@ -30,7 +31,9 @@ usage() {
 }
 
 debug() {
-    [[ "$DEBUG" = "1" ]] && echo $*
+    [[ "$DEBUG" = "1" ]] && {
+        echo $* | tee -a "$LOGFILE"
+    }
 }
 
 get_balance() {
@@ -55,6 +58,8 @@ exit_handler() {
     exit 0
 }
 
+
+true > "$LOGFILE"
 trap exit_handler TERM
 
 debug "DISPLAY=$DISPLAY"
