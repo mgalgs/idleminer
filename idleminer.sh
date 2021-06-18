@@ -11,6 +11,10 @@
 #   - IDLE_THRESHOLD :: Optional. Default: "10 minutes". Any string usable
 #                       with `units`.
 #   - DEBUG :: Optional. Set to 1 for debug prints.
+#   - ALLOW_TIME_START :: Optional. Hour after which mining can start.
+#                         Doesn't stop mining if already running.
+#   - ALLOW_TIME_END :: Optional. Hour before which mining can start.
+#                         Doesn't stop mining if already running.
 
 SERVICE_NAME=$1
 LOGFILE=/tmp/idleminer.log
@@ -58,6 +62,21 @@ exit_handler() {
     exit 0
 }
 
+in_allowed_time_window() {
+    [[ -z "$ALLOW_TIME_START" || -z "$ALLOW_TIME_END" ]] && {
+        debug "No ALLOW_TIME_START and ALLOW_TIME_END. No time window restrictions."
+        return 0
+    }
+    local hour=$(date +"%-H")
+    [[ $hour -ge $ALLOW_TIME_START || $hour -lt $ALLOW_TIME_END ]] && {
+        debug "Allowing start since hour ($hour) >= ALLOW_TIME_START " \
+              "($ALLOW_TIME_START) or hour ($hour) < ALLOW_TIME_END ($ALLOW_TIME_END)"
+        return 0
+    }
+    debug "Blocking start since hour ($hour) < ALLOW_TIME_START " \
+          "($ALLOW_TIME_START) and hour ($hour) >= ALLOW_TIME_END ($ALLOW_TIME_END)"
+    return 1
+}
 
 true > "$LOGFILE"
 trap exit_handler TERM
@@ -73,7 +92,7 @@ echo "Will start mining once idle for $IDLE_THRESHOLD"
 while :; do
     idle_time_ms=$(xprintidle)
     debug "We have been idle for $idle_time_ms ms (waiting for $idle_threshold_ms)"
-    if [[ $idle_time_ms -gt $idle_threshold_ms ]]; then
+    if [[ $idle_time_ms -gt $idle_threshold_ms ]] && in_allowed_time_window; then
         # ensure it's running
         systemctl --user is-active --quiet "$SERVICE_NAME" || {
             echo "$SERVICE_NAME wasn't running so we're starting that puppy since we've been idle for $IDLE_THRESHOLD"
