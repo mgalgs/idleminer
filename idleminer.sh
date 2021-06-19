@@ -11,10 +11,9 @@
 #   - IDLE_THRESHOLD :: Optional. Default: "10 minutes". Any string usable
 #                       with `units`.
 #   - DEBUG :: Optional. Set to 1 for debug prints.
-#   - ALLOW_TIME_START :: Optional. Hour after which mining can start.
-#                         Doesn't stop mining if already running.
-#   - ALLOW_TIME_END :: Optional. Hour before which mining can start.
-#                         Doesn't stop mining if already running.
+#   - OVERNIGHT_START :: Optional. Hour after which mining may start.
+#   - OVERNIGHT_END :: Optional. Hour after which mining must stop.
+
 
 SERVICE_NAME=$1
 LOGFILE=/tmp/idleminer.log
@@ -26,6 +25,12 @@ short_ethminer_address="$(cut -c1-8 <<<${ethminer_address})...$(cut -c36- <<<${e
 # convert readable idle threshold to seconds
 IDLE_THRESHOLD=${IDLE_THRESHOLD:-"10 minutes"}
 idle_threshold_ms=$(units --terse "$IDLE_THRESHOLD" milliseconds)
+
+if [[ -z "$OVERNIGHT_START" || -z "$OVERNIGHT_END" ]]; then
+    HAVE_OVERNIGHT_WINDOW=no
+else
+    HAVE_OVERNIGHT_WINDOW=yes
+fi
 
 # validate service name
 [[ -n "$SERVICE_NAME" ]] || { usage; exit 1; }
@@ -62,19 +67,19 @@ exit_handler() {
     exit 0
 }
 
-in_allowed_time_window() {
-    [[ -z "$ALLOW_TIME_START" || -z "$ALLOW_TIME_END" ]] && {
-        debug "No ALLOW_TIME_START and ALLOW_TIME_END. No time window restrictions."
+check_in_overnight_window() {
+    [[ $HAVE_OVERNIGHT_WINDOW = no ]] && {
+        debug "No OVERNIGHT_START and OVERNIGHT_END. No time window restrictions."
         return 0
     }
     local hour=$(date +"%-H")
-    [[ $hour -ge $ALLOW_TIME_START || $hour -lt $ALLOW_TIME_END ]] && {
-        debug "Allowing start since hour ($hour) >= ALLOW_TIME_START " \
-              "($ALLOW_TIME_START) or hour ($hour) < ALLOW_TIME_END ($ALLOW_TIME_END)"
+    [[ $hour -ge $OVERNIGHT_START || $hour -lt $OVERNIGHT_END ]] && {
+        debug "Allowing start since hour ($hour) >= OVERNIGHT_START " \
+              "($OVERNIGHT_START) or hour ($hour) < OVERNIGHT_END ($OVERNIGHT_END)"
         return 0
     }
-    debug "Blocking start since hour ($hour) < ALLOW_TIME_START " \
-          "($ALLOW_TIME_START) and hour ($hour) >= ALLOW_TIME_END ($ALLOW_TIME_END)"
+    debug "Blocking start since hour ($hour) < OVERNIGHT_START " \
+          "($OVERNIGHT_START) and hour ($hour) >= OVERNIGHT_END ($OVERNIGHT_END)"
     return 1
 }
 
@@ -87,16 +92,21 @@ debug "XAUTHORITY=$XAUTHORITY"
 prev_balance=$(get_balance)
 initial_balance=$prev_balance
 print_balance
-echo "Will start mining once idle for $IDLE_THRESHOLD"
+echo -n "Will start mining once idle for $IDLE_THRESHOLD"
+if [[ $HAVE_OVERNIGHT_WINDOW = yes ]]; then
+    echo " and hour >= $OVERNIGHT_START and hour < $OVERNIGHT_END"
+else
+    echo
+fi
 
 while :; do
     idle_time_ms=$(xprintidle)
     debug "We have been idle for $idle_time_ms ms (waiting for $idle_threshold_ms)"
 
-    if in_allowed_time_window; then
-        allowed_window=yes
+    if check_in_overnight_window; then
+        in_overnight_window=yes
     else
-        allowed_window=no
+        in_overnight_window=no
     fi
     if [[ $idle_time_ms -gt $idle_threshold_ms ]]; then
         sufficiently_idle=yes
@@ -104,7 +114,7 @@ while :; do
         sufficiently_idle=no
     fi
 
-    if [[ $sufficiently_idle = yes ]] && [[ $allowed_window = yes ]]; then
+    if [[ $sufficiently_idle = yes ]] && [[ $in_overnight_window = yes ]]; then
         # ensure it's running
         systemctl --user is-active --quiet "$SERVICE_NAME" || {
             echo "$SERVICE_NAME wasn't running so we're starting that puppy since we've been idle for $IDLE_THRESHOLD"
@@ -120,7 +130,7 @@ while :; do
         # ensure it's not running
         systemctl --user is-active --quiet "$SERVICE_NAME" && {
             echo "$SERVICE_NAME needs to stop " \
-                 "(allowed_window=$allowed_window, sufficiently_idle=$sufficiently_idle)"
+                 "(in_overnight_window=$in_overnight_window, sufficiently_idle=$sufficiently_idle)"
             systemctl --user stop "$SERVICE_NAME"
             # final balance print after transitioning to the stopped state
             print_balance
