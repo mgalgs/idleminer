@@ -92,7 +92,19 @@ echo "Will start mining once idle for $IDLE_THRESHOLD"
 while :; do
     idle_time_ms=$(xprintidle)
     debug "We have been idle for $idle_time_ms ms (waiting for $idle_threshold_ms)"
-    if [[ $idle_time_ms -gt $idle_threshold_ms ]] && in_allowed_time_window; then
+
+    if in_allowed_time_window; then
+        allowed_window=yes
+    else
+        allowed_window=no
+    fi
+    if [[ $idle_time_ms -gt $idle_threshold_ms ]]; then
+        sufficiently_idle=yes
+    else
+        sufficiently_idle=no
+    fi
+
+    if [[ $sufficiently_idle = yes ]] && [[ $allowed_window = yes ]]; then
         # ensure it's running
         systemctl --user is-active --quiet "$SERVICE_NAME" || {
             echo "$SERVICE_NAME wasn't running so we're starting that puppy since we've been idle for $IDLE_THRESHOLD"
@@ -107,7 +119,8 @@ while :; do
     else
         # ensure it's not running
         systemctl --user is-active --quiet "$SERVICE_NAME" && {
-            echo "$SERVICE_NAME needs to stop since we're no longer idle"
+            echo "$SERVICE_NAME needs to stop " \
+                 "(allowed_window=$allowed_window, sufficiently_idle=$sufficiently_idle)"
             systemctl --user stop "$SERVICE_NAME"
             # final balance print after transitioning to the stopped state
             print_balance
