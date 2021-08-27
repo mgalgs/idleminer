@@ -1,2 +1,4 @@
 ETHMINER_POOL=stratum1+ssl://<miner_address>.<node_name>@<pool>.flexpool.io:5555
 IDLE_THRESHOLD="10 minutes"
+OVERNIGHT_START=22
+OVERNIGHT_END=8
