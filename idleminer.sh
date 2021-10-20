@@ -106,6 +106,7 @@ else
     echo
 fi
 
+sufficiently_idle=no
 while :; do
     idle_time_ms=$(xprintidle)
     debug "We have been idle for $idle_time_ms ms (waiting for $IDLE_THRESHOLD_MS)"
@@ -118,7 +119,27 @@ while :; do
     if [[ $idle_time_ms -gt $IDLE_THRESHOLD_MS ]]; then
         sufficiently_idle=yes
     else
-        sufficiently_idle=no
+        if [[ $sufficiently_idle = yes ]]; then
+            # transitioning from idle to busy. Need to debounce to make
+            # sure we're actually busy and it wasn't just a fluke. if we
+            # went straight back to being idle (no activity for 5 seconds)
+            # then this was a fluke and should be debounced.
+            debug "Debouncing idle_time_ms ($idle_time_ms)"
+            sleep 5
+            new_idle_time_ms=$(xprintidle)
+            idle_ms_during_sleep=$((new_idle_time_ms - idle_time_ms))
+            if [[ $idle_ms_during_sleep -lt $(units --terse "5 seconds" milliseconds) ]]; then
+                # still seeing activity, so we're not actually idle. DEBOUNCE!
+                debug "Still seeing activity, only idled for $idle_ms_during_sleep ms out of the last 5000"
+                sufficiently_idle=no
+            else
+                debug "Seems like we're actually still idle, idled $idle_ms_during_sleep ms out of the last 5000, so this was a fluke"
+                sufficiently_idle=yes
+            fi
+        else
+            # not transitioning state, so no need to debounce
+            sufficiently_idle=no
+        fi
     fi
 
     if [[ $sufficiently_idle = yes ]] && [[ $in_overnight_window = yes ]]; then
