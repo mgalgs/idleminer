@@ -76,7 +76,7 @@ exit_handler() {
 
 check_in_overnight_window() {
     [[ $HAVE_OVERNIGHT_WINDOW = no ]] && {
-        debug "No OVERNIGHT_START and OVERNIGHT_END. No time window restrictions."
+        debug_log "No OVERNIGHT_START and OVERNIGHT_END. No time window restrictions."
         return 0
     }
     local hour=$(date +"%-H")
