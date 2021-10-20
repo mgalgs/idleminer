@@ -24,7 +24,7 @@ short_ethminer_address="$(cut -c1-8 <<<${ethminer_address})...$(cut -c36- <<<${e
 
 # convert readable idle threshold to seconds
 IDLE_THRESHOLD=${IDLE_THRESHOLD:-"10 minutes"}
-idle_threshold_ms=$(units --terse "$IDLE_THRESHOLD" milliseconds)
+IDLE_THRESHOLD_MS=$(units --terse "$IDLE_THRESHOLD" milliseconds)
 
 if [[ -z "$OVERNIGHT_START" || -z "$OVERNIGHT_END" ]]; then
     HAVE_OVERNIGHT_WINDOW=no
@@ -101,14 +101,14 @@ fi
 
 while :; do
     idle_time_ms=$(xprintidle)
-    debug "We have been idle for $idle_time_ms ms (waiting for $idle_threshold_ms)"
+    debug "We have been idle for $idle_time_ms ms (waiting for $IDLE_THRESHOLD_MS)"
 
     if check_in_overnight_window; then
         in_overnight_window=yes
     else
         in_overnight_window=no
     fi
-    if [[ $idle_time_ms -gt $idle_threshold_ms ]]; then
+    if [[ $idle_time_ms -gt $IDLE_THRESHOLD_MS ]]; then
         sufficiently_idle=yes
     else
         sufficiently_idle=no
