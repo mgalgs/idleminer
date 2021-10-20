@@ -45,6 +45,13 @@ debug() {
     }
 }
 
+debug_log() {
+    # like debug(), but doesn't echo to stdout
+    [[ "$DEBUG" = "1" ]] && {
+        echo $* >> "$LOGFILE"
+    }
+}
+
 get_balance() {
     curl -s "https://api.flexpool.io/v2/miner/balance?coin=ETH&address=${ethminer_address}" \
         | jq '.result.balance * pow(10; -18)'
