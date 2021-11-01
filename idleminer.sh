@@ -127,13 +127,12 @@ while :; do
             debug "Debouncing idle_time_ms ($idle_time_ms)"
             sleep 5
             new_idle_time_ms=$(xprintidle)
-            idle_ms_during_sleep=$((new_idle_time_ms - idle_time_ms))
-            if [[ $idle_ms_during_sleep -lt $(units --terse "5 seconds" milliseconds) ]]; then
+            if [[ $new_idle_time_ms -lt $(units --terse "5 seconds" milliseconds) ]]; then
                 # still seeing activity, so we're not actually idle. DEBOUNCE!
-                debug "Still seeing activity, only idled for $idle_ms_during_sleep ms out of the last 5000"
+                debug "Still seeing activity, only idled for $new_idle_time_ms ms out of the last 5000"
                 sufficiently_idle=no
             else
-                debug "Seems like we're actually still idle, idled $idle_ms_during_sleep ms out of the last 5000, so this was a fluke"
+                debug "Seems like we're actually still idle, idled $new_idle_time_ms ms out of the last 5000, so this was a fluke"
                 sufficiently_idle=yes
             fi
         else
