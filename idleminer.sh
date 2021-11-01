@@ -109,7 +109,6 @@ fi
 sufficiently_idle=no
 while :; do
     idle_time_ms=$(xprintidle)
-    debug "We have been idle for $idle_time_ms ms (waiting for $IDLE_THRESHOLD_MS)"
 
     if check_in_overnight_window; then
         in_overnight_window=yes
