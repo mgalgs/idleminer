@@ -41,7 +41,11 @@ usage() {
 
 debug() {
     [[ "$DEBUG" = "1" ]] && {
-        echo $* | tee -a "$LOGFILE"
+        # can't use `tee' due to
+        # https://lists.freedesktop.org/archives/systemd-devel/2021-October/047048.html
+        # :sob:
+        echo $*
+        echo $* >> "$LOGFILE"
     }
 }
 
